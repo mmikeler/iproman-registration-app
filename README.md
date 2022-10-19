@@ -1,70 +1,94 @@
-# Getting Started with Create React App
+# Файлы и каталоги
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- `c` директория компонентов
+  - `FIELDS.jsx` компоненты полей
+  - `local.jsx`  локализация
+  - `part_1.jsx` компоненты раздела
+  - `part_2.jsx` компоненты раздела
+  - `part_3.jsx` компоненты раздела
+  - `part_4.jsx` компоненты раздела
+  - `PART.jsx`   компоненты обёртки раздела
+- `img` медиафайлы
+- `App.css` основной файл стилей
+- `App.jsx` основной файл приложения
 
-## Available Scripts
+&nbsp;
 
-In the project directory, you can run:
+# Описание работы приложения
+По мере заполнения полей формы данные собираются в `state.form`. При попытке перейти на следующий шаг, проводится модерация полей текущего раздела и выдаются предупреждения в случае ошибок заполнения. По факту корректного заполнения формы до третьего шага включительно посылается запрос к API на создание нового пользователя и, в случае успеха, осуществляется переход на последний шаг с уведомлением об успешном завершении регистрации.
 
-### `npm start`
+&nbsp;
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Добавление/изменение раздела
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Обёртка раздела включает предзаголовок, прогресбар, описание шага
 
-### `npm test`
+- __PART__
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  Внесите в `switch` индекс нового раздела перед добавление.
 
-### `npm run build`
+- __PART_CONTAINER__
+```javascript
+  <PART_CONTAINER
+    pretitle="string"             // текст перед блоком раздела
+    step={`${__(9, 'Шаг')} 1/3`}  // такая конструкция с указанием шага и локализацией
+    progress="33%"                // степень прогресса с указанием знака %
+  >
+  { /* ваш контент */ }
+  </PART_CONTAINER>
+```
+- __PREV_BTN__, __NEXT_BTN__
+  
+  Отличие кнопок в том, что `NEXT_BTN` проводит валидацию полей раздела при попытке перехода.
+  
+```javascript
+  <PREV_BTN 
+    part="1"              // на какую часть перейти
+    text={__(21, 'back')} // текст кнопки
+  />
+  <NEXT_BTN 
+    part="3"              // на какую часть перейти
+    text={__(9, 'next') + " 3/3"} // текст кнопки
+  />
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+&nbsp;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Добавление полей
+Большинство атрибутов каждого поля берётся из объекта настроек `state.o`, который копируется из `window.o` при инициализации приложения.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- __INPUT__, __TEXTAREA__, __SELECT__
+  ```javascript
+  <SELECT f="string" />
+  <INPUT 
+    f="string"        // ключ поля как он будет сохранён в БД
+    pattern="string"  // html атрибут, принимает строку, которая преобразуется в RegExp()
+    type="string"     // тип поля
+  />
+  ```
+- __OPTIONAL_INPUT__
+  
+  Представляет собой группу из INPUT и кастомного чекбокса, который включает 
+  или отключает текстовое поле. Значение обоих полей фиксируется в БД при change. Ключ чекбокса составляется автоматически как: ключ текстового поля + `_on`.
+  
+  ```javascript
+  <OPTIONAL_INPUT
+    f="string"        // ключ поля как он будет сохранён в БД
+    extClass="string" // можно указать свои классы через пробел
+  />
+  ```
+- __FILE_FIELD__
 
-### `npm run eject`
+  Выводит диалог для загрузки изображения с компьютера. `label` и `note` берутся из `state.o.fields`.
+  ```javascript
+    <FILE_FIELD 
+      f="string" // Ключ поля как он будет записан в БД
+    />
+  ```
+&nbsp;
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Локализация
+Локализованные данные должны хранится в `window.o.localize`.
+- `__(n, [defaultText = '[text]'])`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  Возвращает локализованную строку, в случае присутствия `n` в объекте `window.o.localize`, иначе возвращает `defaultText`.
